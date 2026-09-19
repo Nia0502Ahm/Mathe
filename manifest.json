@@ -1,0 +1,22 @@
+JSON
+{
+  "name": "Mathe Trainer",
+  "short_name": "Mathe",
+  "start_url": "/Mathe/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "Mathe Trainer mit 500 Aufgaben",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
