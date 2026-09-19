@@ -1,853 +1,638 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathe Trainer</title>
+  <style>
+    :root {
+      --bg1: #e0f2fe;
+      --bg2: #f5f3ff;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --success-dark: #15803d;
+      --secondary: #64748b;
+      --secondary-dark: #475569;
+      --accent: #c7d2fe;
+      --border: #e5e7eb;
+      --shadow: 0 12px 30px rgba(37, 99, 235, 0.12);
+    }
 
-<title>Mathe Trainer – 500 Aufgaben</title>
+    * { box-sizing: border-box; }
 
-<style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      padding: 24px;
+    }
 
-* {
-    box-sizing: border-box;
-}
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #dbeafe, #f5f3ff);
-    margin: 0;
-    padding: 20px;
-}
+    .card {
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 28px 24px;
+      margin-top: 20px;
+    }
 
-.container {
-    max-width: 800px;
-    margin: auto;
-}
+    h1 {
+      text-align: center;
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin: 0 0 12px;
+    }
 
-.box {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 5px 25px #999;
-    margin-top: 20px;
-}
-
-h1 {
-    text-align: center;
-}
-
-h2 {
-    margin-top: 25px;
-}
-
-.themen {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.themen button {
-    padding: 18px;
-    font-size: 17px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: #e0e7ff;
-}
-
-.themen button:hover {
-    background: #c7d2fe;
-}
-
-#aufgabe {
-    font-size: 25px;
-    text-align: center;
-    margin: 35px 0;
-}
-
-input {
-    display: block;
-    width: 80%;
-    max-width: 400px;
-    margin: auto;
-    padding: 14px;
-    font-size: 18px;
-    text-align: center;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-}
-
-button {
-    padding: 12px 25px;
-    margin: 12px 5px;
-    font-size: 17px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-#prüfen {
-    background: #2563eb;
-    color: white;
-}
-
-#weiter {
-    background: #16a34a;
-    color: white;
-}
-
-#zurück {
-    background: #64748b;
-    color: white;
-}
-
-#meldung {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    min-height: 35px;
-}
-
-.info {
-    text-align: center;
-    font-size: 18px;
-}
-
-.versteckt {
-    display: none;
-}
-
-@media(max-width:600px) {
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
 
     .themen {
-        grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .themen button,
+    .action-btn,
+    .ghost-btn {
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .themen button {
+      background: linear-gradient(180deg, #e0e7ff, #dbeafe);
+      padding: 20px 18px;
+      min-height: 90px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.08);
+    }
+
+    .themen button:hover,
+    .action-btn:hover,
+    .ghost-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .themen button:hover {
+      background: linear-gradient(180deg, #c7d2fe, #bfdbfe);
+    }
+
+    .quiz-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: var(--primary-dark);
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
     }
 
     #aufgabe {
-        font-size: 20px;
+      font-size: clamp(1.3rem, 3vw, 2.1rem);
+      text-align: center;
+      margin: 20px 0 30px;
+      line-height: 1.6;
+      min-height: 120px;
     }
 
-}
+    input {
+      display: block;
+      width: min(100%, 430px);
+      margin: 0 auto 18px;
+      padding: 16px 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.1rem;
+      outline: none;
+    }
 
-</style>
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .action-btn,
+    .ghost-btn {
+      padding: 13px 20px;
+      font-size: 1rem;
+      color: white;
+      min-width: 150px;
+    }
+
+    .action-btn {
+      background: var(--primary);
+    }
+
+    .action-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .ghost-btn {
+      background: var(--secondary);
+    }
+
+    .ghost-btn:hover {
+      background: var(--secondary-dark);
+    }
+
+    #weiter {
+      background: var(--success);
+    }
+
+    #weiter:hover {
+      background: var(--success-dark);
+    }
+
+    #meldung {
+      text-align: center;
+      font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+      font-weight: 700;
+      min-height: 42px;
+      margin: 18px 0 10px;
+    }
+
+    #punkte {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .versteckt {
+      display: none !important;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 24px 10px 10px;
+    }
+
+    .result-box h1 {
+      margin-bottom: 10px;
+    }
+
+    .result-box h2 {
+      margin: 14px 0;
+      font-size: 2rem;
+    }
+
+    .result-box p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin: 8px 0;
+    }
+
+    @media (max-width: 620px) {
+      .themen {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .action-btn,
+      .ghost-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <div class="card" id="start">
+      <h1>🧮 Mathe Trainer</h1>
+      <p class="subtitle">10 Themen · 50 Aufgaben pro Thema · 500 Aufgaben</p>
 
-<div class="container">
+      <h2>📚 Thema auswählen</h2>
 
-<div class="box" id="start">
+      <div class="themen">
+        <button onclick="starten('parabeln')">📈 Parabeln</button>
+        <button onclick="starten('linear')">📊 Lineare Funktionen</button>
+        <button onclick="starten('gleichungen')">🧮 Gleichungen</button>
+        <button onclick="starten('brueche')">➗ Brüche</button>
+        <button onclick="starten('prozent')">💯 Prozentrechnung</button>
+        <button onclick="starten('geometrie')">📐 Geometrie</button>
+        <button onclick="starten('potenzen')">√ Potenzen & Wurzeln</button>
+        <button onclick="starten('statistik')">📊 Statistik</button>
+        <button onclick="starten('wahrscheinlichkeit')">🎲 Wahrscheinlichkeit</button>
+        <button onclick="starten('trigonometrie')">📐 Trigonometrie</button>
+      </div>
+    </div>
 
-<h1>🧮 Mathe Trainer</h1>
+    <div class="card versteckt" id="quiz">
+      <div class="quiz-head">
+        <span class="badge" id="thema">Thema</span>
+        <span class="badge" id="nummer">Aufgabe 1 von 50</span>
+      </div>
 
-<p class="info">
-10 Themen · 50 Aufgaben pro Thema · 500 Aufgaben
-</p>
+      <div id="aufgabe"></div>
 
-<h2>📚 Thema auswählen</h2>
+      <input id="antwort" type="text" placeholder="Deine Antwort" aria-label="Deine Antwort" />
 
-<div class="themen">
+      <div class="button-row">
+        <button id="prüfen" class="action-btn" onclick="prüfen()">✅ Prüfen</button>
+        <button id="weiter" class="action-btn" onclick="weiter()" style="display:none;">➡️ Nächste Aufgabe</button>
+        <button id="zurück" class="ghost-btn" onclick="hauptmenü()">🏠 Menü</button>
+      </div>
 
-<button onclick="starten('parabeln')">
-📈 Parabeln
-</button>
+      <p id="meldung"></p>
+      <p id="punkte">Punkte: 0</p>
+    </div>
+  </div>
 
-<button onclick="starten('linear')">
-📊 Lineare Funktionen
-</button>
+  <script>
+    function zufall(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-<button onclick="starten('gleichungen')">
-🧮 Gleichungen
-</button>
+    function runden(x) {
+      return Math.round(x * 100) / 100;
+    }
 
-<button onclick="starten('brueche')">
-➗ Brüche
-</button>
+    let aktuelleAufgabe = 0;
+    let punkte = 0;
+    let themaAktuell = "";
+    let aufgaben = [];
 
-<button onclick="starten('prozent')">
-💯 Prozentrechnung
-</button>
+    function themaName(thema) {
+      const map = {
+        parabeln: 'Parabeln',
+        linear: 'Lineare Funktionen',
+        gleichungen: 'Gleichungen',
+        brueche: 'Brüche',
+        prozent: 'Prozentrechnung',
+        geometrie: 'Geometrie',
+        potenzen: 'Potenzen & Wurzeln',
+        statistik: 'Statistik',
+        wahrscheinlichkeit: 'Wahrscheinlichkeit',
+        trigonometrie: 'Trigonometrie'
+      };
+      return map[thema] || 'Thema';
+    }
 
-<button onclick="starten('geometrie')">
-📐 Geometrie
-</button>
+    function parabeln() {
+      let a = zufall(1, 5);
+      let h = zufall(-10, 10);
+      let k = zufall(-10, 10);
+      let liste = [];
 
-<button onclick="starten('potenzen')">
-√ Potenzen & Wurzeln
-</button>
-
-<button onclick="starten('statistik')">
-📊 Statistik
-</button>
-
-<button onclick="starten('wahrscheinlichkeit')">
-🎲 Wahrscheinlichkeit
-</button>
-
-<button onclick="starten('trigonometrie')">
-📐 Trigonometrie
-</button>
-
-</div>
-
-</div>
-
-
-<div class="box versteckt" id="quiz">
-
-<p id="thema"></p>
-
-<p class="info" id="nummer"></p>
-
-<div id="aufgabe"></div>
-
-<input id="antwort" type="text"
-placeholder="Deine Antwort">
-
-<div style="text-align:center">
-
-<button id="prüfen" onclick="prüfen()">
-✅ Prüfen
-</button>
-
-<button id="weiter"
-onclick="weiter()"
-style="display:none">
-➡️ Nächste Aufgabe
-</button>
-
-<button id="zurück"
-onclick="hauptmenü()">
-🏠 Menü
-</button>
-
-</div>
-
-<p id="meldung"></p>
-
-<p class="info" id="punkte">
-Punkte: 0
-</p>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =====================================================
-   HILFSFUNKTIONEN
-===================================================== */
-
-function zufall(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function runden(x) {
-    return Math.round(x * 100) / 100;
-}
-
-
-/* =====================================================
-   GLOBALE VARIABLEN
-===================================================== */
-
-let aktuelleAufgabe = 0;
-let punkte = 0;
-let themaAktuell = "";
-let aufgaben = [];
-
-
-/* =====================================================
-   PARABELN – 50 AUFGABEN
-===================================================== */
-
-function parabeln() {
-
-    let a = zufall(1, 5);
-    let h = zufall(-10, 10);
-    let k = zufall(-10, 10);
-
-    let liste = [];
-
-    for(let i = 0; i < 50; i++) {
-
+      for (let i = 0; i < 50; i++) {
         let typ = i % 5;
 
-        if(typ === 0) {
-
-            liste.push({
-                frage:
-                `f(x) = (x ${h >= 0 ? "- " + h : "+ " + Math.abs(h)})² ${k >= 0 ? "+ " + k : "- " + Math.abs(k)}<br>
-                 Wie lautet der x-Wert des Scheitelpunkts?`,
-
-                antwort: String(h)
-            });
-
-        }
-
-        else if(typ === 1) {
-
-            liste.push({
-                frage:
-                `f(x) = ${a}(x - ${h})² + ${k}<br>
-                 Wie groß ist der a-Wert?`,
-
-                antwort: String(a)
-            });
-
-        }
-
-        else if(typ === 2) {
-
-            let x = zufall(-5,5);
-            let y = a*x*x;
-
-            liste.push({
-                frage:
-                `f(x) = ${a}x²<br>
-                 Berechne f(${x}).`,
-
-                antwort: String(y)
-            });
-
-        }
-
-        else if(typ === 3) {
-
-            liste.push({
-                frage:
-                `f(x) = ${a}x²<br>
-                 Ist die Parabel nach oben oder unten geöffnet?`,
-
-                antwort: "oben"
-            });
-
-        }
-
-        else {
-
-            let x = zufall(1,10);
-            let y = x*x;
-
-            liste.push({
-                frage:
-                `f(x) = x²<br>
-                 Berechne f(${x}).`,
-
-                antwort: String(y)
-            });
-
-        }
-    }
-
-    return liste;
-}
-
-
-/* =====================================================
-   LINEARE FUNKTIONEN – 50
-===================================================== */
-
-function linear() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let m = zufall(1,8);
-        let b = zufall(-10,10);
-        let x = zufall(1,10);
-
-        let y = m*x+b;
-
-        if(i % 2 === 0) {
-
-            liste.push({
-                frage:
-                `f(x) = ${m}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)}<br>
-                 Berechne f(${x}).`,
-
-                antwort:String(y)
-            });
-
+        if (typ === 0) {
+          liste.push({
+            frage: `f(x) = (x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})² ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}<br>Wie lautet der x-Wert des Scheitelpunkts?`,
+            antwort: String(h)
+          });
+        } else if (typ === 1) {
+          liste.push({
+            frage: `f(x) = ${a}(x - ${h})² + ${k}<br>Wie groß ist der a-Wert?`,
+            antwort: String(a)
+          });
+        } else if (typ === 2) {
+          let x = zufall(-5, 5);
+          let y = a * x * x;
+          liste.push({
+            frage: `f(x) = ${a}x²<br>Berechne f(${x}).`,
+            antwort: String(y)
+          });
+        } else if (typ === 3) {
+          liste.push({
+            frage: `f(x) = ${a}x²<br>Ist die Parabel nach oben oder unten geöffnet?`,
+            antwort: 'oben'
+          });
         } else {
-
-            liste.push({
-                frage:
-                `f(x) = ${m}x + ${b}<br>
-                 Wie groß ist die Steigung m?`,
-
-                antwort:String(m)
-            });
-
+          let x = zufall(1, 10);
+          let y = x * x;
+          liste.push({
+            frage: `f(x) = x²<br>Berechne f(${x}).`,
+            antwort: String(y)
+          });
         }
+      }
+
+      return liste;
     }
 
-    return liste;
-}
+    function linear() {
+      let liste = [];
 
+      for (let i = 0; i < 50; i++) {
+        let m = zufall(1, 8);
+        let b = zufall(-10, 10);
+        let x = zufall(1, 10);
+        let y = m * x + b;
 
-/* =====================================================
-   GLEICHUNGEN – 50
-===================================================== */
-
-function gleichungen() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let x = zufall(1,20);
-        let a = zufall(2,10);
-        let b = zufall(1,20);
-
-        let c = a*x+b;
-
-        liste.push({
-
-            frage:
-            `${a}x + ${b} = ${c}<br>
-             Wie groß ist x?`,
-
-            antwort:String(x)
-
-        });
-
-    }
-
-    return liste;
-}
-
-
-/* =====================================================
-   BRÜCHE – 50
-===================================================== */
-
-function brueche() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let a = zufall(1,9);
-        let b = zufall(2,10);
-        let c = zufall(1,9);
-
-        let ergebnis = runden(a/b*c);
-
-        liste.push({
-
-            frage:
-            `${a}/${b} × ${c}<br>
-             Berechne das Ergebnis. 
-             Runde auf 2 Nachkommastellen, falls nötig.`,
-
-            antwort:String(ergebnis)
-
-        });
-
-    }
-
-    return liste;
-}
-
-
-/* =====================================================
-   PROZENTRECHNUNG – 50
-===================================================== */
-
-function prozent() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let grundwert = zufall(50,1000);
-        let p = zufall(5,50);
-
-        let ergebnis = runden(grundwert*p/100);
-
-        liste.push({
-
-            frage:
-            `Wie viel sind ${p}% von ${grundwert}?`,
-
-            antwort:String(ergebnis)
-
-        });
-
-    }
-
-    return liste;
-}
-
-
-/* =====================================================
-   GEOMETRIE – 50
-===================================================== */
-
-function geometrie() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let a = zufall(2,20);
-        let b = zufall(2,20);
-
-        if(i % 2 === 0) {
-
-            liste.push({
-
-                frage:
-                `Ein Rechteck ist ${a} cm lang und ${b} cm breit.<br>
-                 Wie groß ist die Fläche?`,
-
-                antwort:String(a*b)
-
-            });
-
+        if (i % 2 === 0) {
+          liste.push({
+            frage: `f(x) = ${m}x ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}<br>Berechne f(${x}).`,
+            antwort: String(y)
+          });
         } else {
-
-            liste.push({
-
-                frage:
-                `Ein Rechteck ist ${a} cm lang und ${b} cm breit.<br>
-                 Wie groß ist der Umfang?`,
-
-                antwort:String(2*a+2*b)
-
-            });
-
+          liste.push({
+            frage: `f(x) = ${m}x + ${b}<br>Wie groß ist die Steigung m?`,
+            antwort: String(m)
+          });
         }
+      }
+
+      return liste;
     }
 
-    return liste;
-}
+    function gleichungen() {
+      let liste = [];
 
-
-/* =====================================================
-   POTENZEN & WURZELN – 50
-===================================================== */
-
-function potenzen() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let x = zufall(2,12);
-
-        if(i % 2 === 0) {
-
-            liste.push({
-
-                frage:
-                `Berechne ${x}².`,
-
-                antwort:String(x*x)
-
-            });
-
-        } else {
-
-            let y = x*x;
-
-            liste.push({
-
-                frage:
-                `Berechne √${y}.`,
-
-                antwort:String(x)
-
-            });
-
-        }
-
-    }
-
-    return liste;
-}
-
-
-/* =====================================================
-   STATISTIK – 50
-===================================================== */
-
-function statistik() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let a = zufall(1,10);
-        let b = zufall(1,10);
-        let c = zufall(1,10);
-        let d = zufall(1,10);
-
-        let mittelwert = runden((a+b+c+d)/4);
+      for (let i = 0; i < 50; i++) {
+        let x = zufall(1, 20);
+        let a = zufall(2, 10);
+        let b = zufall(1, 20);
+        let c = a * x + b;
 
         liste.push({
-
-            frage:
-            `Berechne den Mittelwert von:<br>
-             ${a}, ${b}, ${c}, ${d}`,
-
-            antwort:String(mittelwert)
-
+          frage: `${a}x + ${b} = ${c}<br>Wie groß ist x?`,
+          antwort: String(x)
         });
+      }
 
+      return liste;
     }
 
-    return liste;
-}
+    function brueche() {
+      let liste = [];
 
+      for (let i = 0; i < 50; i++) {
+        let a = zufall(1, 9);
+        let b = zufall(2, 10);
+        let c = zufall(1, 9);
+        let ergebnis = runden(a / b * c);
 
-/* =====================================================
-   WAHRSCHEINLICHKEIT – 50
-===================================================== */
+        liste.push({
+          frage: `${a}/${b} × ${c}<br>Berechne das Ergebnis. Runde auf 2 Nachkommastellen, falls nötig.`,
+          antwort: String(ergebnis)
+        });
+      }
 
-function wahrscheinlichkeit() {
+      return liste;
+    }
 
-    let liste = [];
+    function prozent() {
+      let liste = [];
 
-    for(let i=0;i<50;i++) {
+      for (let i = 0; i < 50; i++) {
+        let grundwert = zufall(50, 1000);
+        let p = zufall(5, 50);
+        let ergebnis = runden(grundwert * p / 100);
 
-        let guenstige = zufall(1,5);
+        liste.push({
+          frage: `Wie viel sind ${p}% von ${grundwert}?`,
+          antwort: String(ergebnis)
+        });
+      }
+
+      return liste;
+    }
+
+    function geometrie() {
+      let liste = [];
+
+      for (let i = 0; i < 50; i++) {
+        let a = zufall(2, 20);
+        let b = zufall(2, 20);
+
+        if (i % 2 === 0) {
+          liste.push({
+            frage: `Ein Rechteck ist ${a} cm lang und ${b} cm breit.<br>Wie groß ist die Fläche?`,
+            antwort: String(a * b)
+          });
+        } else {
+          liste.push({
+            frage: `Ein Rechteck ist ${a} cm lang und ${b} cm breit.<br>Wie groß ist der Umfang?`,
+            antwort: String(2 * a + 2 * b)
+          });
+        }
+      }
+
+      return liste;
+    }
+
+    function potenzen() {
+      let liste = [];
+
+      for (let i = 0; i < 50; i++) {
+        let x = zufall(2, 12);
+
+        if (i % 2 === 0) {
+          liste.push({
+            frage: `Berechne ${x}².`,
+            antwort: String(x * x)
+          });
+        } else {
+          let y = x * x;
+          liste.push({
+            frage: `Berechne √${y}.`,
+            antwort: String(x)
+          });
+        }
+      }
+
+      return liste;
+    }
+
+    function statistik() {
+      let liste = [];
+
+      for (let i = 0; i < 50; i++) {
+        let a = zufall(1, 10);
+        let b = zufall(1, 10);
+        let c = zufall(1, 10);
+        let d = zufall(1, 10);
+        let mittelwert = runden((a + b + c + d) / 4);
+
+        liste.push({
+          frage: `Berechne den Mittelwert von:<br>${a}, ${b}, ${c}, ${d}`,
+          antwort: String(mittelwert)
+        });
+      }
+
+      return liste;
+    }
+
+    function wahrscheinlichkeit() {
+      let liste = [];
+
+      for (let i = 0; i < 50; i++) {
+        let guenstige = zufall(1, 5);
         let gesamt = 6;
-
-        let p = runden(guenstige/gesamt);
-
-        liste.push({
-
-            frage:
-            `Ein Würfel hat 6 Seiten.<br>
-             ${guenstige} Seite(n) sind günstig.<br>
-             Wie groß ist die Wahrscheinlichkeit als Dezimalzahl?`,
-
-            antwort:String(p)
-
-        });
-
-    }
-
-    return liste;
-}
-
-
-/* =====================================================
-   TRIGONOMETRIE – 50
-===================================================== */
-
-function trigonometrie() {
-
-    let liste = [];
-
-    for(let i=0;i<50;i++) {
-
-        let gegen = zufall(3,15);
-        let hyp = zufall(16,25);
-
-        let sin = runden(gegen/hyp);
+        let p = runden(guenstige / gesamt);
 
         liste.push({
-
-            frage:
-            `In einem rechtwinkligen Dreieck gilt:<br>
-             Gegenkathete = ${gegen}<br>
-             Hypotenuse = ${hyp}<br><br>
-             Berechne sin(α).<br>
-             Runde auf 2 Nachkommastellen.`,
-
-            antwort:String(sin)
-
+          frage: `Ein Würfel hat 6 Seiten.<br>${guenstige} Seite(n) sind günstig.<br>Wie groß ist die Wahrscheinlichkeit als Dezimalzahl?`,
+          antwort: String(p)
         });
+      }
 
+      return liste;
     }
 
-    return liste;
-}
+    function trigonometrie() {
+      let liste = [];
 
+      for (let i = 0; i < 50; i++) {
+        let gegen = zufall(3, 15);
+        let hyp = zufall(16, 25);
+        let sin = runden(gegen / hyp);
 
-/* =====================================================
-   THEMA STARTEN
-===================================================== */
+        liste.push({
+          frage: `In einem rechtwinkligen Dreieck gilt:<br>Gegenkathete = ${gegen}<br>Hypotenuse = ${hyp}<br><br>Berechne sin(α). Runde auf 2 Nachkommastellen.`,
+          antwort: String(sin)
+        });
+      }
 
-function starten(thema) {
+      return liste;
+    }
 
-    themaAktuell = thema;
+    function starten(thema) {
+      themaAktuell = thema;
 
-    if(thema === "parabeln")
-        aufgaben = parabeln();
+      if (thema === 'parabeln') aufgaben = parabeln();
+      if (thema === 'linear') aufgaben = linear();
+      if (thema === 'gleichungen') aufgaben = gleichungen();
+      if (thema === 'brueche') aufgaben = brueche();
+      if (thema === 'prozent') aufgaben = prozent();
+      if (thema === 'geometrie') aufgaben = geometrie();
+      if (thema === 'potenzen') aufgaben = potenzen();
+      if (thema === 'statistik') aufgaben = statistik();
+      if (thema === 'wahrscheinlichkeit') aufgaben = wahrscheinlichkeit();
+      if (thema === 'trigonometrie') aufgaben = trigonometrie();
 
-    if(thema === "linear")
-        aufgaben = linear();
+      aktuelleAufgabe = 0;
+      punkte = 0;
 
-    if(thema === "gleichungen")
-        aufgaben = gleichungen();
+      document.getElementById('start').classList.add('versteckt');
+      document.getElementById('quiz').classList.remove('versteckt');
+      document.getElementById('thema').textContent = themaName(thema);
+      anzeigen();
+    }
 
-    if(thema === "brueche")
-        aufgaben = brueche();
+    function anzeigen() {
+      document.getElementById('nummer').textContent = `Aufgabe ${aktuelleAufgabe + 1} von 50`;
+      document.getElementById('aufgabe').innerHTML = aufgaben[aktuelleAufgabe].frage;
+      document.getElementById('antwort').value = '';
+      document.getElementById('meldung').textContent = '';
+      document.getElementById('prüfen').style.display = 'inline-block';
+      document.getElementById('weiter').style.display = 'none';
+      document.getElementById('punkte').textContent = `Punkte: ${punkte}`;
+      document.getElementById('antwort').focus();
+    }
 
-    if(thema === "prozent")
-        aufgaben = prozent();
+    function prüfen() {
+      const antwort = document.getElementById('antwort').value.trim().toLowerCase().replace(',', '.');
+      const richtig = String(aufgaben[aktuelleAufgabe].antwort).toLowerCase().replace(',', '.');
 
-    if(thema === "geometrie")
-        aufgaben = geometrie();
-
-    if(thema === "potenzen")
-        aufgaben = potenzen();
-
-    if(thema === "statistik")
-        aufgaben = statistik();
-
-    if(thema === "wahrscheinlichkeit")
-        aufgaben = wahrscheinlichkeit();
-
-    if(thema === "trigonometrie")
-        aufgaben = trigonometrie();
-
-    aktuelleAufgabe = 0;
-    punkte = 0;
-
-    document.getElementById("start")
-        .classList.add("versteckt");
-
-    document.getElementById("quiz")
-        .classList.remove("versteckt");
-
-    anzeigen();
-}
-
-
-/* =====================================================
-   AUFGABE ANZEIGEN
-===================================================== */
-
-function anzeigen() {
-
-    document.getElementById("nummer").innerHTML =
-        `Aufgabe ${aktuelleAufgabe + 1} von 50`;
-
-    document.getElementById("aufgabe").innerHTML =
-        aufgaben[aktuelleAufgabe].frage;
-
-    document.getElementById("antwort").value = "";
-
-    document.getElementById("meldung").innerHTML = "";
-
-    document.getElementById("prüfen").style.display =
-        "inline-block";
-
-    document.getElementById("weiter").style.display =
-        "none";
-
-    document.getElementById("punkte").innerHTML =
-        `Punkte: ${punkte}`;
-}
-
-
-/* =====================================================
-   ANTWORT PRÜFEN
-===================================================== */
-
-function prüfen() {
-
-    let eingabe =
-        document.getElementById("antwort")
-        .value
-        .trim()
-        .toLowerCase()
-        .replace(",", ".");
-
-    let richtig =
-        String(aufgaben[aktuelleAufgabe].antwort)
-        .toLowerCase()
-        .replace(",", ".");
-
-    if(eingabe === richtig) {
-
-        document.getElementById("meldung").innerHTML =
-            "✅ Richtig!";
-
+      if (antwort === richtig) {
+        document.getElementById('meldung').textContent = '✅ Richtig!';
         punkte++;
+      } else {
+        document.getElementById('meldung').textContent = '❌ Falsch! Richtige Antwort: ' + aufgaben[aktuelleAufgabe].antwort;
+      }
 
-    } else {
-
-        document.getElementById("meldung").innerHTML =
-            "❌ Falsch! Richtige Antwort: " +
-            aufgaben[aktuelleAufgabe].antwort;
-
+      document.getElementById('punkte').textContent = `Punkte: ${punkte}`;
+      document.getElementById('prüfen').style.display = 'none';
+      document.getElementById('weiter').style.display = 'inline-block';
     }
 
-    document.getElementById("punkte").innerHTML =
-        `Punkte: ${punkte}`;
+    function weiter() {
+      aktuelleAufgabe++;
 
-    document.getElementById("prüfen").style.display =
-        "none";
-
-    document.getElementById("weiter").style.display =
-        "inline-block";
-}
-
-
-/* =====================================================
-   NÄCHSTE AUFGABE
-===================================================== */
-
-function weiter() {
-
-    aktuelleAufgabe++;
-
-    if(aktuelleAufgabe < 50) {
-
+      if (aktuelleAufgabe < 50) {
         anzeigen();
-
-    } else {
-
-        document.getElementById("quiz").innerHTML = `
-
-        <h1>🏆 Fertig!</h1>
-
-        <h2>${punkte} / 50 Punkte</h2>
-
-        <p>
-        Du hast ${punkte} von 50 Aufgaben richtig.
-        </p>
-
-        <p>
-        Falsch: ${50 - punkte}
-        </p>
-
-        <button onclick="hauptmenü()">
-        🏠 Hauptmenü
-        </button>
-
-        <button onclick="starten(themaAktuell)">
-        🔄 Nochmal
-        </button>
-
+      } else {
+        document.getElementById('quiz').innerHTML = `
+          <div class="result-box">
+            <h1>🏆 Fertig!</h1>
+            <h2>${punkte} / 50 Punkte</h2>
+            <p>Du hast ${punkte} von 50 Aufgaben richtig.</p>
+            <p>Falsch: ${50 - punkte}</p>
+            <div class="button-row">
+              <button class="action-btn" onclick="hauptmenü()">🏠 Hauptmenü</button>
+              <button class="ghost-btn" onclick="starten(themaAktuell)">🔄 Nochmal</button>
+            </div>
+          </div>
         `;
+      }
     }
-}
 
+    function hauptmenü() {
+      document.getElementById('quiz').classList.add('versteckt');
+      document.getElementById('start').classList.remove('versteckt');
+      document.getElementById('quiz').innerHTML = `
+        <div class="quiz-head">
+          <span class="badge" id="thema">Thema</span>
+          <span class="badge" id="nummer">Aufgabe 1 von 50</span>
+        </div>
 
-/* =====================================================
-   HAUPTMENÜ
-===================================================== */
+        <div id="aufgabe"></div>
 
-function hauptmenü() {
+        <input id="antwort" type="text" placeholder="Deine Antwort" aria-label="Deine Antwort" />
 
-    document.getElementById("quiz")
-        .classList.add("versteckt");
+        <div class="button-row">
+          <button id="prüfen" class="action-btn" onclick="prüfen()">✅ Prüfen</button>
+          <button id="weiter" class="action-btn" onclick="weiter()" style="display:none;">➡️ Nächste Aufgabe</button>
+          <button id="zurück" class="ghost-btn" onclick="hauptmenü()">🏠 Menü</button>
+        </div>
 
-    document.getElementById("start")
-        .classList.remove("versteckt");
-}
+        <p id="meldung"></p>
+        <p id="punkte">Punkte: 0</p>
+      `;
+    }
 
-</script>
-
+    document.getElementById('antwort')?.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        if (document.getElementById('prüfen').style.display !== 'none') {
+          prüfen();
+        } else {
+          weiter();
+        }
+      }
+    });
+  </script>
 </body>
 </html>
