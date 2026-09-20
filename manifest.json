@@ -1,12 +1,11 @@
-JSON
 {
   "name": "Mathe Trainer",
-  "short_name": "Mathe",
+  "short_name": "Mathe Trainer",
+  "description": "Mathe Aufgaben und Übungen zum Lernen",
   "start_url": "/Mathe/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
-  "description": "Mathe Trainer mit 500 Aufgaben",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2563EB",
   "icons": [
     {
       "src": "icon-192.png",
