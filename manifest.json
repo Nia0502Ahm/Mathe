@@ -8,12 +8,12 @@
   "theme_color": "#2563EB",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "math_trainer_192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "",
       "sizes": "512x512",
       "type": "image/png"
     }
